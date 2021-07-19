@@ -45,25 +45,40 @@ class ClientGame {
     this.engine.input.onKey({
       ArrowLeft: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(-1, 0, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('left');
         }
       },
       ArrowRight: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(+1, 0, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('right');
         }
       },
       ArrowDown: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(0, +1, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('down');
         }
       },
       ArrowUp: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(0, -1, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('up');
         }
       },
     });
+  }
+
+  movePlayerToDir(dir) {
+    const dirs = {
+      left: [-1, 0],
+      right: [1, 0],
+      down: [0, 1],
+      up: [0, -1],
+    };
+
+    const { player } = this;
+
+    if (player) {
+      player.moveByCellCoord(dirs[dir][0], dirs[dir][1], (cell) => cell.findObjectsByType('grass').length);
+    }
   }
 
   static init(cfg) {

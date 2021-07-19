@@ -47,7 +47,7 @@ class MovableObject extends PositionedObject {
     this.speed && this.animateMotion(time);
   }
 
-  moveTo(x, y/* ,  smooth = true, speed = 200 */) {
+  moveTo(x, y /* ,  smooth = true, speed = 200 */) {
     let [newX, newY] = [x, y];
     const { width, height } = this;
 
