@@ -23,17 +23,22 @@ class ClientGame {
   }
 
   createEngine() {
-    return new ClientEngine(document.getElementById(this.cfg.tagId));
+    return new ClientEngine(document.getElementById(this.cfg.tagId), this);
   }
 
   createWorld() {
     return new ClientWorld(this, this.engine, levelCfg);
   }
 
+  getWorld() {
+    return this.map;
+  }
+
   initEngine() {
     this.engine.loadSprites(sprites).then(() => {
       this.map.init();
       this.engine.on('render', (_, time) => {
+        this.engine.camera.focusAtGameObject(this.player);
         this.map.render(time);
       });
       this.engine.start();
@@ -45,25 +50,49 @@ class ClientGame {
     this.engine.input.onKey({
       ArrowLeft: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(-1, 0, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('left');
         }
       },
       ArrowRight: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(+1, 0, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('right');
         }
       },
       ArrowDown: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(0, +1, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('down');
         }
       },
       ArrowUp: (keydown) => {
         if (keydown) {
-          this.player.moveByCellCoord(0, -1, (cell) => cell.findObjectsByType('grass').length);
+          this.movePlayerToDir('up');
         }
       },
     });
+  }
+
+  movePlayerToDir(dir) {
+    const dirs = {
+      left: [-1, 0],
+      right: [1, 0],
+      down: [0, 1],
+      up: [0, -1],
+    };
+
+    const { player } = this;
+
+    if (player && player.motionProgress === 1) {
+      const canMove = player.moveByCellCoord(
+        dirs[dir][0],
+        dirs[dir][1],
+        (cell) => cell.findObjectsByType('grass').length,
+      );
+
+      if (canMove) {
+        player.setState(dir);
+        player.once('motion-stopped', () => player.setState('main'));
+      }
+    }
   }
 
   static init(cfg) {

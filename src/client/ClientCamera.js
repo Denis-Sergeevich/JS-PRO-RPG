@@ -4,20 +4,16 @@ class ClientCamera extends MovableObject {
   constructor(cfg) {
     super(cfg);
 
-    Object.assign(
-      this,
-      {
-        cfg,
-        widht: cfg.canvas.widht,
-        height: cfg.canvas.height,
-      },
+    Object.assign(this, {
       cfg,
-    );
+      width: cfg.canvas.width,
+      height: cfg.canvas.height,
+    });
   }
 
   focusAtGameObject(obj) {
     const pos = obj.worldPosition(50, 50);
-    this.MoveTo(pos.x - this.widht / 2, pos.y - this.height / 2, false);
+    this.moveTo(pos.x - this.width / 2, pos.y - this.height / 2, false);
   }
 }
 
